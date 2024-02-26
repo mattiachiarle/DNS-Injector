@@ -1,0 +1,12 @@
+To perform the attack, I initially focused on the simplest case (no -h option and default interface). I analyzed the
+structure of valid DNS responses, as well as the documentation about DNS, and I figured out which flags and fields I
+should have set and with which content. The spoofing of lower layers (IP and TCP/UDP) was trivial since it simply
+consisted in swapping the data of the query. Of course, TCP required the proper configuration of sequence number and
+ACK. Initially, it didn't work since I didn't consider that queries could be performed with IPv6 too. After adding it,
+I saw the first results. Then, I fine-tuned my spoofed response to make it look like exactly as the standard response.
+The main tweaks on which I focused were the flag types. To make it as similar as possible I inserted only the flags set
+by the correct response, adding also the aa flag since otherwise I'd get problems with nslookup (it marks the response
+as coming from a non-authoritative server).
+The most useful online resource was the following guide: https://null-byte.wonderhowto.com/how-to/build-dns-packet-sniffer-with-scapy-and-python-0163601/,
+that helped me configure the skeleton of the attack. I then figured out how to write the injection part by trials and errors.
+I tested it on a Mac with a Windows 11 virtual machine, listening on port bridge101. I used both dig and nslookup.

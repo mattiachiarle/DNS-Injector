@@ -1,0 +1,5 @@
+October 27 2023 18:40:46
+TXID 0x7291 Request www.cs.uic.edu
+Answer1 10.6.6.8 
+Answer2 131.193.32.29 
+

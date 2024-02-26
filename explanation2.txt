@@ -1,0 +1,16 @@
+To create the detector, I started from the code of the injector since the basic functionality (sniffing
+the traffic) is the same. I then filtered out all the DNS requests by discarding the packets with source port different
+from 53. At this point, I only deal with DNS responses. I then tried to understand how I could avoid as much as possible
+false positives. To do so and to keep track of the past packets, I created a dictionary. The key includes the domain name
+contained in the request, the TxID and the type of the DNS response. In my experience, in fact, the real DNS server never
+sent more than one DNS response (if there were multiple IPs available, it either included them into the additional field
+or it sent them after further host's requests, with different TxID and/or type). If the key generated from the received
+response has not been inserted yet, we simply insert a record in the dictionary. Otherwise, we record the attack.
+This configuration allowed me to avoid false positives in my tests. However, when I detected an attack I wasn't able to
+understand which was the spoofed response among the two. In my case (i.e. testing it with dnsinject.py) it would have
+been enough to take advantage of the small differences highlighted in spoofed.txt, but since I wanted to make the program
+as general as possible I didn't use them. In fact, a good spoofed packed can't be distinguished by the original one, so
+it should be impossible to understand which is the spoofed packet among the two alternatives.
+I used the same test environment of task 1, and I used as injector the program I wrote for task 1. Unfortunately, I
+couldn't test it with dsniff since it can't be installed on Mac.
+I didn't use any additional resource with respect to task 1.

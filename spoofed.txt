@@ -1,0 +1,20 @@
+In the creation of spoofed DNS responses, I mainly focused on DNS layer. In fact, for the lower layers, it's
+not relevant to achieve a perfect match as long as the response arrives to the host. Due to this, we can notice
+differences in some fields. For example, the MAC addresses in the two responses will be different. This is fine,
+since the real response will probably arrive from the router while the spoofed one from my device. It would be possible
+to spoof them too of course, but since it wasn't necessary for the success of the attack I didn't do it. For what
+concerns IP, we can notice that we have a difference in the identification field. As the RFC states,
+"In IPv4, the Identification (ID) field is a 16-bit value that is unique for every datagram for a given source
+address, destination address, and protocol, such that it does not repeat within the maximum datagram lifetime
+(MDL) [RFC791] [RFC1122]". So, this value can't be spoofed since the server will send a different ID with respect
+to the client. However, as long as we don't use an ID that has already been exploited in the communication, we
+are fine. In my solution, I don't explicitly handle it.
+Another difference is the TTL value: the spoofed response has TTL=64, while the original one 128. Again, this
+is a marginal difference that doesn't affect in any way the attack.
+UDP headers are instead exactly the same. For DNS instead, I noticed that the real DNS response frequently has
+an Additional Record field, which is missing from the spoofed response. Within it, we can find some indications
+to the client, such as Cache flush: false or Cannot handle DNSSEC security RRs. However, since they are additional
+fields, the attack works also if we don't include them in the spoofed response as long as the relevant data
+is trustworthy. For the flags, I left only the flags of the original response, but I added aa=1. Without it, nslookup
+provided a warning with my spoofed responses, saying that they didn't come from an authoritative server. By adding it,
+the warning disappeared.
